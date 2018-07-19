@@ -10,6 +10,6 @@ To run the script, you need:
 # Usage
 Type into command line smth like:
 
-python main.py -f [--file] <file>
+python main.py -f [--file] < file name >
 
 And follow the instructions. :)
