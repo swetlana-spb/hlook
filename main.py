@@ -1,20 +1,21 @@
 import sys
 import os
-from parsers import parseJson, parseCsv, parseXml
+from parsers import CParseJson, CParseCsv, CParseXml
 from database import connectToMysql, uploadDataToMysql
 
 
 def parseFile(file):
     extensionName = os.path.splitext(file)[1]
     if extensionName == u'.json':
-        data = parseJson(file)
+        parser = CParseJson(file)
     elif extensionName == u'.csv':
-        data = parseCsv(file)
+        parser = CParseCsv(file)
     elif extensionName == u'.xml':
-        data = parseXml(file)
+        parser = CParseXml(file)
     else:
         print(u'Not supported file extension "%s". Supported file extensions are: ".json", ".csv" and ".xml".'%extensionName)
         return None
+    data = parser.parse()
     return data
 
 
@@ -22,8 +23,8 @@ def main(file):
     data = parseFile(file)
     if data:
         host, user, passwd = connectToMysql()
-        uploadDataToMysql(host, user, passwd, data)
-        print(u'Data successfully uploaded. Thank you. Bye! :)')
+        if uploadDataToMysql(host, user, passwd, data):
+            print(u'Data successfully uploaded. Thank you. Bye! :)')
     elif data is not None:
         print(u'Sorry, there is no data to upload. :(')
 
