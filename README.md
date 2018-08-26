@@ -1,5 +1,5 @@
 # hlook
-A small script for loading data from files .json, .xml or .csv into mysql database.
+A small script for uploading data from files .json, .xml or .csv into mysql database.
 
 To run the script, you need:
  - python 3.x
@@ -10,6 +10,6 @@ To run the script, you need:
 # Usage
 Type into command line smth like:
 
-python main.py -f [--file] <file>
+python main.py -f [--file] < file name >
 
 And follow the instructions. :)
