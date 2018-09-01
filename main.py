@@ -15,9 +15,16 @@ def createArgsParser():
     parser = argparse.ArgumentParser(description='Loading data from files .json, .xml or .csv into mysql database.')
     parser.add_argument('-f', '--fileName', help='path to a file', required=True)
     parser.add_argument('-H', '--host', help='ip-address of the mysql database for uploading data', required=True)
-    parser.add_argument('-p', '--port', help='port of the mysql database for uploading data', required=False, default=3306)
+    parser.add_argument('-p', '--port',
+                        help='port of the mysql database for uploading data',
+                        required=False,
+                        default=3306)
     parser.add_argument('-u', '--username', help='username of the mysql database', required=True)
-    parser.add_argument('-P', '--password', action=Password, nargs='?', help='password of the mysql database user', required=True)
+    parser.add_argument('-P', '--password',
+                        action=Password,
+                        nargs='?',
+                        help='password of the mysql database user',
+                        required=True)
     return parser
 
 
