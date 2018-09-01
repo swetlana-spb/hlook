@@ -8,8 +8,20 @@ To run the script, you need:
  - mysql (script for creating database included)
 
 # Usage
-Type into command line smth like:
+main.py [-h] -f FILENAME -H HOST [-p PORT] -u USERNAME -P [PASSWORD]
 
-python main.py -f [--file] < file name >
+Loading data from files .json, .xml or .csv into mysql database.
 
-And follow the instructions. :)
+optional arguments:
+
+  -h, --help            show this help message and exit
+  
+  -f FILENAME, --fileName FILENAME                        path to a file
+  
+  -H HOST, --host HOST  ip-address of the mysql database for uploading data
+  
+  -p PORT, --port PORT  port of the mysql database for uploading data
+  
+  -u USERNAME, --username USERNAME username of the mysql database
+  
+  -P [PASSWORD], --password [PASSWORD] password of the mysql database user
