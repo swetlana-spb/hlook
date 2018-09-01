@@ -10,8 +10,6 @@ To run the script, you need:
 # Usage
 main.py [-h] -f FILENAME -H HOST [-p PORT] -u USERNAME -P [PASSWORD]
 
-Loading data from files .json, .xml or .csv into mysql database.
-
 optional arguments:
 
   -h, --help            show this help message and exit
