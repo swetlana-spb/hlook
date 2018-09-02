@@ -30,7 +30,6 @@ class Parser(object):
         self.fileName = fileName
         self.data = []
         self.photoTag = ''
-        self.photosList = []
 
 
     def constructData(self, fileName):
@@ -53,19 +52,18 @@ class Parser(object):
 
 
     def parse(self):
-        fileName = open(self.fileName)
-        self.constructData(fileName)
-        fileName.close()
-        return self.data
+        with open(self.fileName) as fileName:
+            self.constructData(fileName)
+            return self.data
 
 
 class ParseJson(Parser):
     def constructData(self, fileName):
         for line in fileName:
             jsonLine = json.loads(line)
-            self.photosList = []
+            photosList = []
             for image in jsonLine['images']:
-                self.photosList.append(image['orig_url'])
+                photosList.append(image['orig_url'])
             dataList = [jsonLine['en']['name'],
                         jsonLine['en']['address'],
                         jsonLine['en']['city'],
@@ -75,7 +73,7 @@ class ParseJson(Parser):
                         jsonLine['longitude'],
                         jsonLine['latitude'],
                         jsonLine['en']['description'],
-                        self.photosList]
+                        photosList]
             dataDict = self.constructDataLine(dataList)
             self.data.append(dataDict)
 
@@ -84,13 +82,13 @@ class ParseCsv(Parser):
     def constructData(self, fileName):
         reader = csv.DictReader(fileName, delimiter=',')
         for csvLine in reader:
-            self.photosList = []
+            photosList = []
             photoCount = 0
             for key in csvLine:
                 if key.startswith('photo'):
                     photoCount += 1
             for i in range(photoCount):
-                self.photosList.append(csvLine['photo%s'%(i+1)])
+                photosList.append(csvLine['photo%s'%(i+1)])
             dataList = [csvLine['hotel_name'],
                         csvLine['addressline1'],
                         csvLine['city'],
@@ -100,7 +98,7 @@ class ParseCsv(Parser):
                         csvLine['longitude'],
                         csvLine['latitude'],
                         csvLine['overview'],
-                        self.photosList]
+                        photosList]
             dataDict = self.constructDataLine(dataList)
             self.data.append(dataDict)
 
@@ -111,9 +109,9 @@ class ParseXml(Parser):
         root = tree.getroot()
         for hotel in root.findall('hotel'):
             photos = hotel.find('photos').findall('photo')
-            self.photosList = []
+            photosList = []
             for photo in photos:
-                self.photosList.append(photo.findtext('url'))
+                photosList.append(photo.findtext('url'))
             dataList = [hotel.find('name').text,
                         hotel.find('address').text,
                         hotel.find('city').findtext('en'),
@@ -123,6 +121,6 @@ class ParseXml(Parser):
                         hotel.find('longitude').text,
                         hotel.find('latitude').text,
                         hotel.find('descriptions').findtext('en'),
-                        self.photosList]
+                        photosList]
             dataDict = self.constructDataLine(dataList)
             self.data.append(dataDict)
