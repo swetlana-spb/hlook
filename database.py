@@ -10,15 +10,15 @@ class WorkingWithMySQL(object):
 
     def uploadDataToMysql(self):
         try:
-            db = MySQLDatabase(u'hlook',
+            db = MySQLDatabase('hlook',
                                host=self.args.host,
                                port=self.args.port,
                                user=self.args.username,
                                passwd=self.args.password)
             db.connect()
-            print(u'Connection opened.')
+            print('Connection opened.')
             databaseProxy.initialize(db)
-            print(u'Uploading data to Mysql.')
+            print('Uploading data to Mysql.')
 
             for row in self.data:
                 id = Information.create(name = row['name'],
@@ -36,6 +36,6 @@ class WorkingWithMySQL(object):
                                   link = photo)
 
             db.close()
-            print(u'Connection closed.')
+            print('Connection closed.')
         except:
-            print(u'Connection failed.')
+            print('Connection failed.')
