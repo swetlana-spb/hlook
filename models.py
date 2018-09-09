@@ -4,6 +4,7 @@ databaseProxy = Proxy()
 
 
 class Information(Model):
+    id = PrimaryKeyField(null=False)
     name = CharField()
     address = TextField()
     city = CharField()
@@ -20,7 +21,8 @@ class Information(Model):
 
 
 class Photos(Model):
-    master_id = IntegerField()
+    id = PrimaryKeyField(null=False)
+    master_id = ForeignKeyField(Information)
     link = TextField()
 
     class Meta:

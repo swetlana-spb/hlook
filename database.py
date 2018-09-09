@@ -20,20 +20,13 @@ class WorkingWithMySQL(object):
             databaseProxy.initialize(db)
             print(u'Uploading data to Mysql.')
 
-            for row in self.data:
-                id = Information.create(name = row['name'],
-                                   address = row['address'],
-                                   city = row['city'],
-                                   country = row['country'],
-                                   countryCode = row['countryCode'],
-                                   rating=row['rating'],
-                                   longitude = row['longitude'],
-                                   latitude = row['latitude'],
-                                   description = row['description'])
-
-                for photo in row['photos']:
-                    Photos.create(master_id = id,
-                                  link = photo)
+            with db.atomic():
+                for row in self.data:
+                    id = Information.create(**row)
+                    photos = []
+                    for photo in row['photos']:
+                        photos.append((id, photo))
+                    Photos.insert_many(photos, fields=[Photos.master_id, Photos.link]).execute()
 
             db.close()
             print(u'Connection closed.')

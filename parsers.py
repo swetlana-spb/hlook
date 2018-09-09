@@ -8,7 +8,6 @@ class ParserManager(object):
     def __init__(self, args):
         self.args = args
 
-
     def parserChooser(self, fileName):
         extensionName = os.path.splitext(self.args.fileName)[1]
         if extensionName == u'.json':
@@ -17,7 +16,6 @@ class ParserManager(object):
             return ParseCsv(fileName)
         elif extensionName == u'.xml':
             return ParseXml(fileName)
-
 
     def getData(self):
         parser = self.parserChooser(self.args.fileName)
@@ -31,25 +29,8 @@ class Parser(object):
         self.data = []
         self.photoTag = ''
 
-
     def constructData(self, fileName):
         raise Exception('You need to override function in child class!')
-
-
-    def constructDataLine(self, dataLine):
-        dataDict = {'photos': []}
-        (dataDict['name'],
-        dataDict['address'],
-        dataDict['city'],
-        dataDict['country'],
-        dataDict['countryCode'],
-        dataDict['rating'],
-        dataDict['longitude'],
-        dataDict['latitude'],
-        dataDict['description'],
-        dataDict['photos']) = dataLine
-        return dataDict
-
 
     def parse(self):
         with open(self.fileName) as fileName:
@@ -64,17 +45,16 @@ class ParseJson(Parser):
             photosList = []
             for image in jsonLine['images']:
                 photosList.append(image['orig_url'])
-            dataList = [jsonLine['en']['name'],
-                        jsonLine['en']['address'],
-                        jsonLine['en']['city'],
-                        jsonLine['en']['country'],
-                        jsonLine['country_code'],
-                        jsonLine['star_rating'],
-                        jsonLine['longitude'],
-                        jsonLine['latitude'],
-                        jsonLine['en']['description'],
-                        photosList]
-            dataDict = self.constructDataLine(dataList)
+            dataDict = {'name': jsonLine['en']['name'],
+                        'address': jsonLine['en']['address'],
+                        'city': jsonLine['en']['city'],
+                        'country': jsonLine['en']['country'],
+                        'countryCode': jsonLine['country_code'],
+                        'rating': jsonLine['star_rating'],
+                        'longitude': jsonLine['longitude'],
+                        'latitude': jsonLine['latitude'],
+                        'description': jsonLine['en']['description'],
+                        'photos': photosList}
             self.data.append(dataDict)
 
 
@@ -89,17 +69,16 @@ class ParseCsv(Parser):
                     photoCount += 1
             for i in range(photoCount):
                 photosList.append(csvLine['photo%s'%(i+1)])
-            dataList = [csvLine['hotel_name'],
-                        csvLine['addressline1'],
-                        csvLine['city'],
-                        csvLine['country'],
-                        csvLine['countryisocode'],
-                        csvLine['star_rating'],
-                        csvLine['longitude'],
-                        csvLine['latitude'],
-                        csvLine['overview'],
-                        photosList]
-            dataDict = self.constructDataLine(dataList)
+            dataDict = {'name': csvLine['hotel_name'],
+                        'address': csvLine['addressline1'],
+                        'city': csvLine['city'],
+                        'country': csvLine['country'],
+                        'countryCode': csvLine['countryisocode'],
+                        'rating': csvLine['star_rating'],
+                        'longitude': csvLine['longitude'],
+                        'latitude': csvLine['latitude'],
+                        'description': csvLine['overview'],
+                        'photos': photosList}
             self.data.append(dataDict)
 
 
@@ -112,15 +91,14 @@ class ParseXml(Parser):
             photosList = []
             for photo in photos:
                 photosList.append(photo.findtext('url'))
-            dataList = [hotel.find('name').text,
-                        hotel.find('address').text,
-                        hotel.find('city').findtext('en'),
-                        hotel.find('country').findtext('en'),
-                        hotel.find('countrytwocharcode').text,
-                        hotel.find('stars').text,
-                        hotel.find('longitude').text,
-                        hotel.find('latitude').text,
-                        hotel.find('descriptions').findtext('en'),
-                        photosList]
-            dataDict = self.constructDataLine(dataList)
+            dataDict = {'name': hotel.find('name').text,
+                        'address': hotel.find('address').text,
+                        'city': hotel.find('city').findtext('en'),
+                        'country': hotel.find('country').findtext('en'),
+                        'countryCode': hotel.find('countrytwocharcode').text,
+                        'rating': hotel.find('stars').text,
+                        'longitude': hotel.find('longitude').text,
+                        'latitude': hotel.find('latitude').text,
+                        'description': hotel.find('descriptions').findtext('en'),
+                        'photos': photosList}
             self.data.append(dataDict)
