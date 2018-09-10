@@ -3,7 +3,7 @@ A small script for uploading data from files .json, .xml or .csv into mysql data
 
 To run the script, you need:
  - python 3.x
- - peewee
+ - peewee >= 3.6.0
  - pymysql
  - mysql (script for creating database included)
 
