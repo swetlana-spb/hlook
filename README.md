@@ -8,18 +8,22 @@ To run the script, you need:
  - mysql (script for creating database included)
 
 # Usage
-main.py [-h] -f FILENAME -H HOST [-p PORT] -u USERNAME -P [PASSWORD]
+main.py [-h] -f FILENAME -H HOST [-p PORT] -u USERNAME -P [PASSWORD] [-d DATABASE]
+
+Loading data from files .json, .xml or .csv into mysql database.
 
 optional arguments:
 
-  -h, --help            show this help message and exit
+  -h, --help  show this help message and exit
   
-  -f FILENAME, --fileName FILENAME                        path to a file
+  -f FILENAME, --fileName FILENAME path to a file
   
-  -H HOST, --host HOST  ip-address of the mysql database for uploading data
+  -H HOST, --host HOST  ip-address of the database for uploading data
   
-  -p PORT, --port PORT  port of the mysql database for uploading data
+  -p PORT, --port PORT  port of the database for uploading data (default=3306)
   
-  -u USERNAME, --username USERNAME username of the mysql database
+  -u USERNAME, --username USERNAME username of the database
   
-  -P [PASSWORD], --password [PASSWORD] password of the mysql database user
+  -P [PASSWORD], --password [PASSWORD] password for the database user
+  
+  -d DATABASE, --database DATABASE type of the database: mysql, postgresql (default=mysql)
