@@ -8,17 +8,17 @@ class ParserManager(object):
     def __init__(self, args):
         self.args = args
 
-    def parserChooser(self, fileName):
-        extensionName = os.path.splitext(self.args.fileName)[1]
-        if extensionName == u'.json':
+    def parser_chooser(self, fileName):
+        extension_name = os.path.splitext(self.args.fileName)[1]
+        if extension_name == u'.json':
             return ParseJson(fileName)
-        elif extensionName == u'.csv':
+        elif extension_name == u'.csv':
             return ParseCsv(fileName)
-        elif extensionName == u'.xml':
+        elif extension_name == u'.xml':
             return ParseXml(fileName)
 
-    def getData(self):
-        parser = self.parserChooser(self.args.fileName)
+    def get_data(self):
+        parser = self.parser_chooser(self.args.fileName)
         data = parser.parse()
         return data
 
@@ -27,71 +27,70 @@ class Parser(object):
     def __init__(self, fileName):
         self.fileName = fileName
         self.data = []
-        self.photoTag = ''
 
-    def constructData(self, fileName):
+    def construct_data(self, fileName):
         raise Exception('You need to override function in child class!')
 
     def parse(self):
         with open(self.fileName) as fileName:
-            self.constructData(fileName)
+            self.construct_data(fileName)
             return self.data
 
 
 class ParseJson(Parser):
-    def constructData(self, fileName):
+    def construct_data(self, fileName):
         for line in fileName:
-            jsonLine = json.loads(line)
-            photosList = []
-            for image in jsonLine['images']:
-                photosList.append(image['orig_url'])
-            dataDict = {'name': jsonLine['en']['name'],
-                        'address': jsonLine['en']['address'],
-                        'city': jsonLine['en']['city'],
-                        'country': jsonLine['en']['country'],
-                        'countryCode': jsonLine['country_code'],
-                        'rating': jsonLine['star_rating'],
-                        'longitude': jsonLine['longitude'],
-                        'latitude': jsonLine['latitude'],
-                        'description': jsonLine['en']['description'],
-                        'photos': photosList}
-            self.data.append(dataDict)
+            json_line = json.loads(line)
+            photos_list = []
+            for image in json_line['images']:
+                photos_list.append(image['orig_url'])
+            data_dict = {'name': json_line['en']['name'],
+                        'address': json_line['en']['address'],
+                        'city': json_line['en']['city'],
+                        'country': json_line['en']['country'],
+                        'countryCode': json_line['country_code'],
+                        'rating': json_line['star_rating'],
+                        'longitude': json_line['longitude'],
+                        'latitude': json_line['latitude'],
+                        'description': json_line['en']['description'],
+                        'photos': photos_list}
+            self.data.append(data_dict)
 
 
 class ParseCsv(Parser):
-    def constructData(self, fileName):
+    def construct_data(self, fileName):
         reader = csv.DictReader(fileName, delimiter=',')
-        for csvLine in reader:
-            photosList = []
-            photoCount = 0
-            for key in csvLine:
+        for csv_line in reader:
+            photos_list = []
+            photo_counter = 0
+            for key in csv_line:
                 if key.startswith('photo'):
-                    photoCount += 1
-            for i in range(photoCount):
-                photosList.append(csvLine['photo%s'%(i+1)])
-            dataDict = {'name': csvLine['hotel_name'],
-                        'address': csvLine['addressline1'],
-                        'city': csvLine['city'],
-                        'country': csvLine['country'],
-                        'countryCode': csvLine['countryisocode'],
-                        'rating': csvLine['star_rating'],
-                        'longitude': csvLine['longitude'],
-                        'latitude': csvLine['latitude'],
-                        'description': csvLine['overview'],
-                        'photos': photosList}
-            self.data.append(dataDict)
+                    photo_counter += 1
+            for i in range(photo_counter):
+                photos_list.append(csv_line['photo%s'%(i+1)])
+            data_dict = {'name': csv_line['hotel_name'],
+                        'address': csv_line['addressline1'],
+                        'city': csv_line['city'],
+                        'country': csv_line['country'],
+                        'countryCode': csv_line['countryisocode'],
+                        'rating': csv_line['star_rating'],
+                        'longitude': csv_line['longitude'],
+                        'latitude': csv_line['latitude'],
+                        'description': csv_line['overview'],
+                        'photos': photos_list}
+            self.data.append(data_dict)
 
 
 class ParseXml(Parser):
-    def constructData(self, fileName):
+    def construct_data(self, fileName):
         tree = ET.parse(fileName)
         root = tree.getroot()
         for hotel in root.findall('hotel'):
             photos = hotel.find('photos').findall('photo')
-            photosList = []
+            photos_list = []
             for photo in photos:
-                photosList.append(photo.findtext('url'))
-            dataDict = {'name': hotel.find('name').text,
+                photos_list.append(photo.findtext('url'))
+            data_dict = {'name': hotel.find('name').text,
                         'address': hotel.find('address').text,
                         'city': hotel.find('city').findtext('en'),
                         'country': hotel.find('country').findtext('en'),
@@ -100,5 +99,5 @@ class ParseXml(Parser):
                         'longitude': hotel.find('longitude').text,
                         'latitude': hotel.find('latitude').text,
                         'description': hotel.find('descriptions').findtext('en'),
-                        'photos': photosList}
-            self.data.append(dataDict)
+                        'photos': photos_list}
+            self.data.append(data_dict)

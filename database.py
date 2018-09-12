@@ -7,21 +7,21 @@ class DatabaseManager(object):
         self.args = args
         self.db = None
 
-    def openConnection(self):
-        dbase = self.getDatabase()
-        self.db = dbase.connectToDatabase()
+    def open(self):
+        dbase = self.get_database()
+        self.db = dbase.connect()
 
-    def getDatabase(self):
+    def get_database(self):
         if self.args.database == 'mysql':
             return MySQL(self.args)
         else:
             return print('Sorry, not implemented yet :(')
 
-    def closeConnection(self):
+    def close(self):
         self.db.close()
         print('Connection closed.')
 
-    def uploadData(self, data):
+    def upload_data(self, data):
         print('Uploading data into {0}.'.format(self.args.database))
         for row in self.db.batch_commit(data, 100):
             id = Information.create(**row)
@@ -30,12 +30,12 @@ class DatabaseManager(object):
                 photos.append((id, photo))
             Photos.insert_many(photos, fields=[Photos.master_id, Photos.link]).execute()
 
-    def connectToDatabase(self):
+    def connect(self):
         raise Exception('You need to override function in child class!')
 
 
 class MySQL(DatabaseManager):
-    def connectToDatabase(self):
+    def connect(self):
         db = MySQLDatabase('hlook',
                            host=self.args.host,
                            port=self.args.port,

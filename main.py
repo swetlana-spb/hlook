@@ -11,7 +11,7 @@ class Password(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def getArgs():
+def get_args():
     parser = argparse.ArgumentParser(description='Loading data from files .json, .xml or .csv into database.')
     parser.add_argument('-f', '--fileName', help='path to a file', required=True)
     parser.add_argument('-H', '--host', help='ip-address of the database for uploading data', required=True)
@@ -32,18 +32,18 @@ def getArgs():
 
 
 if __name__ == '__main__':
-    args = getArgs()
+    args = get_args()
     db = DatabaseManager(args)
-    db.openConnection()
-    data = ParserManager(args).getData()
+    db.open()
+    data = ParserManager(args).get_data()
 
     if data:
         try:
-            db.uploadData(data)
+            db.upload_data(data)
             print('Data successfully uploaded! :)')
         except:
             print('Oops, something went wrong. :(')
     else:
         print('There is no data to upload. :(')
-    db.closeConnection()
+    db.close()
     print('Bye!')
