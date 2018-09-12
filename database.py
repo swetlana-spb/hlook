@@ -1,30 +1,29 @@
-from peewee import *
+from peewee import MySQLDatabase
 from models import databaseProxy, Information, Photos
 
 
 class DatabaseManager(object):
-    def __init__(self, args, data):
+    def __init__(self, args):
         self.args = args
-        self.data = data
-        self.dbase = None
+        self.db = None
 
     def openConnection(self):
-        dbConnection = self.getDatabase()
-        self.dbase = dbConnection.connectToDatabase()
+        dbase = self.getDatabase()
+        self.db = dbase.connectToDatabase()
 
     def getDatabase(self):
         if self.args.database == 'mysql':
-            return MySQLWorker(self.args, self.data)
+            return MySQL(self.args)
         else:
             return print('Sorry, not implemented yet :(')
 
     def closeConnection(self):
-        self.dbase.close()
+        self.db.close()
         print('Connection closed.')
 
-    def uploadData(self):
+    def uploadData(self, data):
         print('Uploading data into {0}.'.format(self.args.database))
-        for row in self.dbase.batch_commit(self.data, 100):
+        for row in self.db.batch_commit(data, 100):
             id = Information.create(**row)
             photos = []
             for photo in row['photos']:
@@ -35,7 +34,7 @@ class DatabaseManager(object):
         raise Exception('You need to override function in child class!')
 
 
-class MySQLWorker(DatabaseManager):
+class MySQL(DatabaseManager):
     def connectToDatabase(self):
         db = MySQLDatabase('hlook',
                            host=self.args.host,
